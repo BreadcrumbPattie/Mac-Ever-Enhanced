@@ -59,6 +59,10 @@ function Solver.Noise(frameTime)
 	return math.max(NOISE_FLOOR_SECONDS, frameTime * 0.02)
 end
 
+-- Fork: a cheap-marked setting (Benchmark DIMENSIONS) costing less than this share of a
+-- frame is treated as free: 0.06 is about 6% of the frame rate.
+Solver.CHEAP_SHARE = 0.06
+
 -- The format of a System Check report (Benchmark writes it); Solve only reads its own.
 -- 3: render scale floor 85%, anti-aliasing limited to off / FXAA High.
 -- 4: quality first with a frame-rate tolerance; "everything at maximum" measured.
@@ -79,11 +83,12 @@ end
 --    fixed shadow values (Josh, 2026-10-19); version 9 reports budgeted for shadows there.
 -- 11: Shadow Quality is tuned on M3 and later chips, whatever the class (Josh, 2026-11-07);
 --    version 10 reports from those Macs never measured shadows, and M1/M2 Top ones did.
+-- 15: fork; settings marked cheap are carried in the report (settings.cheap).
 -- 14: fork; Render Scale is tuned between 50% and 70%.
 -- 13: fork; View Distance, Environment Detail and Ground Clutter are no longer tuned.
 -- 12: fork; Shadow Quality is only measured at Low and Good, and the System Check budgets
 --    for goal x headroom (report.headroom). Version 11 reports have other shadow levels.
-Solver.REPORT_VERSION = 14
+Solver.REPORT_VERSION = 15
 
 local FSR = 3
 
@@ -506,8 +511,14 @@ end
 function Solver.Recommend(dims, floorTime, goal, tolerance, runNoise)
 	local budget = 1 / Solver.Accepts(goal, tolerance) - floorTime
 	local noise = math.max(Solver.Noise(floorTime), runNoise or 0)
+	-- Fork: a setting marked cheap that costs under CHEAP_SHARE of a frame (the frame the goal
+	-- accepts) counts as free, so it stays at its maximum instead of being given up for a
+	-- few frames per second. Measured, not assumed: a cheap-marked setting that turns out
+	-- to cost a lot is budgeted like any other.
+	local cheapLimit = math.max(noise, Solver.CHEAP_SHARE / Solver.Accepts(goal, tolerance))
 	local function Cost(dim)
-		return dim.cost > noise and dim.cost or 0
+		local limit = dim.cheap and cheapLimit or noise
+		return dim.cost > limit and dim.cost or 0
 	end
 	-- From level index - 1 to index, for a setting measured level by level.
 	local function RawStep(dim, index)
@@ -601,7 +612,7 @@ function Solver.Solve(report, goal, tolerance)
 	for _, setting in ipairs(report.settings) do
 		dims[#dims + 1] = {
 			id = setting.id, name = setting.name, levels = setting.levels, extras = setting.extras,
-			weight = setting.weight, cost = setting.cost, costs = setting.costs, quality = setting.quality,
+			weight = setting.weight, cheap = setting.cheap, cost = setting.cost, costs = setting.costs, quality = setting.quality,
 			keep = setting.keep,
 		}
 	end

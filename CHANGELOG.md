@@ -15,8 +15,7 @@
 ### Changed
 - **Shadow Quality never goes above Good.** The check only measures Low and Good.
 - **Render Scale is kept between 50% and 70%** (FidelityFX upscaling), in 5% steps; the old 85-99% range and the "lower resolution" extra step are gone. Reports are now version 14.
-- **View Distance, Environment Detail and Ground Clutter are never lowered by the System Check or the starting profiles;** they stay at your own values. System Check reports are now version 13: run it again.
-- **Texture Resolution is not tuned by the System Check.** Results and presets set it from the memory you gave in setup: Fair on 8 GB, High on 16 GB or more. Before setup it stays at your own value.
+- **The check now understands which settings are cheap.** View Distance, Environment Detail, Ground Clutter and Texture Filtering are measured like the rest, but when one costs less than 6% of a frame it stays at maximum instead of being given up for a few fps. The starting profiles no longer touch them. Texture Resolution is not tuned for frame rate at all: it follows your memory from setup (Fair on 8 GB, High on 16 GB or more). Reports are now version 15: run the check again.
 - System Check reports are version 12: run the System Check again after updating.
 
 ## 0.6.0
