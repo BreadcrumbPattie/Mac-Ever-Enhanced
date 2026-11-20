@@ -1,4 +1,5 @@
 local addonName, ns = ...
+local L = ns.L
 
 ns.name = addonName
 ns.version = C_AddOns.GetAddOnMetadata(addonName, "Version")
