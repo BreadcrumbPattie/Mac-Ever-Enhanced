@@ -14,6 +14,7 @@
 
 ### Changed
 - **Shadow Quality never goes above Good.** The check only measures Low and Good.
+- **View Distance, Environment Detail and Ground Clutter are never lowered by the System Check or the starting profiles;** they stay at your own values. System Check reports are now version 13: run it again.
 - **Texture Resolution is not tuned by the System Check.** Results and presets set it from the memory you gave in setup: Fair on 8 GB, High on 16 GB or more. Before setup it stays at your own value.
 - System Check reports are version 12: run the System Check again after updating.
 

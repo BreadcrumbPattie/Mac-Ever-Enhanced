@@ -79,9 +79,10 @@ end
 --    fixed shadow values (Josh, 2026-10-19); version 9 reports budgeted for shadows there.
 -- 11: Shadow Quality is tuned on M3 and later chips, whatever the class (Josh, 2026-11-07);
 --    version 10 reports from those Macs never measured shadows, and M1/M2 Top ones did.
+-- 13: fork; View Distance, Environment Detail and Ground Clutter are no longer tuned.
 -- 12: fork; Shadow Quality is only measured at Low and Good, and the System Check budgets
 --    for goal x headroom (report.headroom). Version 11 reports have other shadow levels.
-Solver.REPORT_VERSION = 12
+Solver.REPORT_VERSION = 13
 
 local FSR = 3
 

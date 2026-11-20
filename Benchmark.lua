@@ -96,15 +96,17 @@ local DIMENSIONS = {
 	-- game only runs FidelityFX (upscaling plus a sharpening pass) below 100%, so 99%
 	-- looks crisper than native (community-known trick; Josh confirmed it on his Mac).
 	{ id = "renderscale", name = "RenderScale", levels = { 0.85, 0.9, 0.95, 0.99 }, weight = 40 },
+	-- Fork: View Distance, Environment Detail and Ground Clutter are untuned too: they cost
+	-- little frame rate, so the check never lowers them below the player's own values.
 	-- Fork: textures cost about 3 fps and mostly use memory, so the check never lowers them:
 	-- untuned settings stay at the player's own value (like Secondary Lighting).
 	{ id = "textures", name = "graphicsTextureResolution", floor = 0, weight = 9, untuned = true },
-	{ id = "viewdistance", name = "graphicsViewDistance", floor = 1, weight = 8 },
-	{ id = "environment", name = "graphicsEnvironmentDetail", floor = 1, weight = 7,
+	{ id = "viewdistance", name = "graphicsViewDistance", floor = 1, weight = 8, untuned = true },
+	{ id = "environment", name = "graphicsEnvironmentDetail", floor = 1, weight = 7, untuned = true,
 		extras = { { name = "doodadLodScale", value = 200 } } },
 	{ id = "ssao", name = "graphicsSSAO", floor = 0, weight = 6 },
 	{ id = "filtering", name = "textureFilteringMode", floor = 2, weight = 5 },
-	{ id = "clutter", name = "graphicsGroundClutter", floor = 0, weight = 4,
+	{ id = "clutter", name = "graphicsGroundClutter", floor = 0, weight = 4, untuned = true,
 		extras = { { name = "groundEffectDensity", value = 128 }, { name = "groundEffectDist", value = 200 } } },
 	{ id = "liquid", name = "graphicsLiquidDetail", floor = 0, weight = 4 },
 	{ id = "pbrliquid", name = "graphicsPBRLiquidDetail", floor = 0, weight = 4 },

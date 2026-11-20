@@ -116,7 +116,8 @@ end
 -- Starting profiles (fork addition): what to try first on each class of Mac for a locked
 -- 60 fps with the GPU well below full load, so the fans stay quiet. They are estimates, not
 -- measurements: the System Check replaces them as soon as it has run. ssao and compute are
--- the game's own levels; view, env and clutter are the Graphics menu sliders.
+-- the game's own levels. View distance, environment and ground clutter (view, env, clutter)
+-- are kept for reference only: they cost little frame rate, so profiles never change them.
 Devices.START = {
 	[Devices.ENTRY] = { scale = 0.50, shadows = 0, ssao = 0, compute = 0, view = 3, env = 3, clutter = 3 },
 	[Devices.MID]   = { scale = 0.55, shadows = 2, ssao = 1, compute = 0, view = 4, env = 4, clutter = 5 },
@@ -143,9 +144,6 @@ function Devices.StartChanges(answers)
 		{ name = "RenderScale", value = scale },
 		{ name = "graphicsSSAO", value = profile.ssao },
 		{ name = "graphicsComputeEffects", value = profile.compute },
-		{ name = "graphicsViewDistance", value = profile.view },
-		{ name = "graphicsEnvironmentDetail", value = profile.env },
-		{ name = "graphicsGroundClutter", value = profile.clutter },
 		{ name = "useMaxFPS", value = 1 },
 		{ name = "maxFPS", value = 60 },
 	}
