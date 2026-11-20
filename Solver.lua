@@ -79,10 +79,11 @@ end
 --    fixed shadow values (Josh, 2026-10-19); version 9 reports budgeted for shadows there.
 -- 11: Shadow Quality is tuned on M3 and later chips, whatever the class (Josh, 2026-11-07);
 --    version 10 reports from those Macs never measured shadows, and M1/M2 Top ones did.
+-- 14: fork; Render Scale is tuned between 50% and 70%.
 -- 13: fork; View Distance, Environment Detail and Ground Clutter are no longer tuned.
 -- 12: fork; Shadow Quality is only measured at Low and Good, and the System Check budgets
 --    for goal x headroom (report.headroom). Version 11 reports have other shadow levels.
-Solver.REPORT_VERSION = 13
+Solver.REPORT_VERSION = 14
 
 local FSR = 3
 
@@ -92,7 +93,9 @@ local FSR = 3
 -- at its lowest. Render scale is used rather than the window's resolution: it saves the
 -- same GPU work, keeps text and the interface sharp at full Retina resolution, and
 -- doesn't refresh the game window (which has reset Macs to 1512x982 before).
-local LOW_SCALE_TOP = 0.8
+-- Fork: the normal render scale levels are already 50-70% (Benchmark DIMENSIONS), so going
+-- lower than the usual floor is switched off: a top below the minimum gives no levels.
+local LOW_SCALE_TOP = 0.45
 local LOW_SCALE_FLOOR = 0.5
 local LOW_SCALE_STEP = 0.05
 

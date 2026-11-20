@@ -134,19 +134,18 @@ function Devices.StartChanges(answers)
 		return nil
 	end
 	local notes = {}
-	local scale = profile.scale
-	if not ns.CVars.ResolutionAllowed() then
-		-- Below 85% needs the player's permission (the resolution lock).
-		scale = 0.85
-		notes[#notes + 1] = ns.L("Turn on 'Let Mac-ever lower resolution to reach your goal' to use a lower render scale: it saves the most heat.")
-	end
 	local changes = {
-		{ name = "RenderScale", value = scale },
 		{ name = "graphicsSSAO", value = profile.ssao },
 		{ name = "graphicsComputeEffects", value = profile.compute },
 		{ name = "useMaxFPS", value = 1 },
 		{ name = "maxFPS", value = 60 },
 	}
+	if ns.CVars.ResolutionAllowed() then
+		table.insert(changes, 1, { name = "RenderScale", value = profile.scale })
+	else
+		-- Changing the resolution needs the player's permission (the resolution lock).
+		notes[#notes + 1] = ns.L("Turn on 'Let Mac-ever lower resolution to reach your goal' to use a lower render scale: it saves the most heat.")
+	end
 	-- Shadows below M3 stay Low whatever is asked (Solver.TunesShadows).
 	if ns.Solver.TunesShadows() then
 		changes[#changes + 1] = { name = "graphicsShadowQuality", value = profile.shadows }

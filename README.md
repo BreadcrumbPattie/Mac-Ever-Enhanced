@@ -12,7 +12,7 @@ My version is an enhanced build of Mac-Ever with **headroom**, which makes frame
 
 - **Headroom.** The frame rate stays locked at your goal (for example 60 fps), but graphics are only raised until your Mac could still reach goal x headroom without the cap (60 x 1.6 = about 96 fps). The GPU never runs flat out, so the Mac stays cooler, the fans stay quiet and the frame rate stays stable. Set it on the System Check tab; "Off" restores the original behaviour.
 - **Starting profiles per Mac.** The 60 fps preset works before any System Check, from a profile for your class of Mac (chip, Air or not, memory). A System Check replaces it with a measured result.
-- **Shadow Quality tops out at Good**, **View Distance, Environment Detail and Ground Clutter are never lowered**, and **Texture Resolution is not tuned by the System Check**; it is suggested from your memory (Fair on 8 GB, High on 16 GB or more).
+- **Render Scale stays between 50% and 70%**, **Shadow Quality tops out at Good**, **View Distance, Environment Detail and Ground Clutter are never lowered**, and **Texture Resolution is not tuned by the System Check**; it is suggested from your memory (Fair on 8 GB, High on 16 GB or more).
 - **MacBook Air** gets more headroom by default, because it has no fan.
 - **Serbian translation** (Latin script): Options > AddOns > Mac-ever > Language, or `/macever lang sr`.
 

@@ -95,7 +95,7 @@ local DIMENSIONS = {
 	-- (2026-10-07), even though it ran much faster. The top level is 99%, not 100%: the
 	-- game only runs FidelityFX (upscaling plus a sharpening pass) below 100%, so 99%
 	-- looks crisper than native (community-known trick; Josh confirmed it on his Mac).
-	{ id = "renderscale", name = "RenderScale", levels = { 0.85, 0.9, 0.95, 0.99 }, weight = 40 },
+	{ id = "renderscale", name = "RenderScale", levels = { 0.50, 0.55, 0.60, 0.65, 0.70 }, weight = 40 }, -- fork: 50-70%, FidelityFX upscaling
 	-- Fork: View Distance, Environment Detail and Ground Clutter are untuned too: they cost
 	-- little frame rate, so the check never lowers them below the player's own values.
 	-- Fork: textures cost about 3 fps and mostly use memory, so the check never lowers them:
