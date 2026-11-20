@@ -99,7 +99,7 @@ local function InitDB()
 		end
 	end
 	local ui = Table(db, "ui")
-	for key, kind in pairs({ size = "table", scale = "number", goal = "number", tolerance = "number", headroom = "number", language = "string", lastGoal = "number",
+	for key, kind in pairs({ size = "table", scale = "number", goal = "number", tolerance = "number", headroom = "number", language = "string", locked = "table", lastGoal = "number",
 		lastPreset = "string", appliedValues = "table", appliedCheck = "number", keepHidden = "boolean" }) do
 		if ui[key] ~= nil and type(ui[key]) ~= kind then
 			ui[key] = nil

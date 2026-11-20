@@ -15,7 +15,8 @@ local DRIFT_WARNING_PERCENT = 8
 -- (legibility review, 2026-10-07): setting | now | recommended | cost. The setting
 -- column is the widest, for the description; anything cut off is in the row's tooltip.
 local COLUMNS = {
-	setting = { x = 0, width = 0.40 },
+	setting = { x = 0, width = 0.34 },
+	keep = { x = 0.355, width = 0.06 },
 	now = { x = 0.42, width = 0.17 },
 	recommended = { x = 0.61, width = 0.22 },
 	cost = { width = 0.15 },
@@ -489,6 +490,7 @@ UI.RegisterTab(L("System Check"), function(panel, frame)
 	end
 	local headings = {
 		setting = Heading("Setting"),
+		keep = Heading(L("Keep")),
 		now = Heading("Now"),
 		recommended = Heading("Recommended"),
 		cost = Heading(L("Costs at maximum")),
@@ -496,7 +498,7 @@ UI.RegisterTab(L("System Check"), function(panel, frame)
 	headings.cost:SetJustifyH("RIGHT")
 	-- A heading can't be hovered, so its explanation sits on a frame over it.
 	local costHover = UI.SetTooltip(CreateFrame("Frame", nil, columns), L("Costs at maximum"), {
-		{ text = L("How much frame rate each setting takes at its highest level, measured on your Mac.") },
+		{ text = L("How much frame rate each setting takes at its highest level, measured on your Mac. Tick Keep to leave a setting as it is.") },
 	})
 	costHover:EnableMouse(true)
 	costHover:SetAllPoints(headings.cost)
@@ -566,6 +568,17 @@ UI.RegisterTab(L("System Check"), function(panel, frame)
 		row.Label = Cell(row, "GameFontHighlight")
 		row.Now = Cell(row, "GameFontHighlightSmall")
 		row.Recommended = Cell(row, "GameFontHighlightSmall")
+		-- Keep (fork addition): tick it to leave this setting as it is, whatever the check recommends.
+		row.Keep = CreateFrame("CheckButton", nil, row, "UICheckButtonTemplate")
+		row.Keep:SetSize(22, 22)
+		row.Keep:SetScript("OnClick", ns.Safe(function(self)
+			Solver.SetLocked(self.settingName, self:GetChecked())
+			UpdateApplyButton()
+			UI.Refresh()
+		end))
+		UI.SetTooltip(row.Keep, L("Keep"), {
+			{ text = L("Keep this setting as it is: the System Check's result and the presets never change it, and the rest is worked out around it. Change it yourself under Standard Settings.") },
+		})
 		row.Cost = Cell(row, "GameFontHighlightSmall", "RIGHT")
 		row:EnableMouse(true)
 		row:SetScript("OnEnter", ShowRowTooltip)
@@ -728,6 +741,8 @@ UI.RegisterTab(L("System Check"), function(panel, frame)
 				PlaceCell(row.Label, row, COLUMNS.setting, -6)
 				PlaceCell(row.Now, row, COLUMNS.now, -7)
 				PlaceCell(row.Recommended, row, COLUMNS.recommended, -7)
+				row.Keep:ClearAllPoints()
+				row.Keep:SetPoint("TOPLEFT", row, "TOPLEFT", SIDE + inner * COLUMNS.keep.x, -3)
 				PlaceCell(row.Cost, row, COLUMNS.cost, -7)
 			end
 		end
@@ -777,6 +792,8 @@ UI.RegisterTab(L("System Check"), function(panel, frame)
 			row.Cost:SetText(L("|cffccccccnot measured|r"))
 		end
 		row.info = info
+		row.Keep.settingName = setting.name
+		row.Keep:SetChecked(Solver.IsLocked(setting.name))
 		row.Label:SetText(info.label)
 		row.Now:SetText(info.now)
 	end
@@ -823,7 +840,23 @@ UI.RegisterTab(L("System Check"), function(panel, frame)
 	applyRecommended:SetScript("OnClick", ns.Safe(function()
 		if report and report.changes then
 			local goalFps, uncapped, checkTime = report.goal, report.uncapped, report.time
-			local changes = Solver.ForApply(report.changes)
+			local changes
+			if Solver.AnyLocked() then
+				-- Kept settings: solve again around them from the same measurements.
+				local solution = Solver.Solve(report, report.goal, report.tolerance)
+				if solution then
+					local list = {}
+					for _, change in ipairs(solution.changes) do
+						if report.uncapped and change.name == "useMaxFPS" then
+							list[#list + 1] = { name = "useMaxFPS", value = 0 }
+						elseif not (report.uncapped and change.name == "maxFPS") then
+							list[#list + 1] = change
+						end
+					end
+					changes = Solver.ForApply(list)
+				end
+			end
+			changes = changes or Solver.ForApply(report.changes)
 			UI.Apply(changes, function(kept)
 				if kept then
 					-- Same thing as the goal preset for that frame rate, so the Presets tab shows it.

@@ -308,6 +308,9 @@ ns.Locale.Register("sr", {
 	["they were"] = "su bila",
 	["it"] = "ga",
 	["them"] = "ih",
+	["Keep"] = "Zadrži",
+	["Keep this setting as it is: the System Check's result and the presets never change it, and the rest is worked out around it. Change it yourself under Standard Settings."] = "Zadržite ovo podešavanje kakvo jeste: rezultat System Check-a i preseti ga nikad ne menjaju, a ostalo se računa oko njega. Menjajte ga sami pod Standard Settings.",
+	["How much frame rate each setting takes at its highest level, measured on your Mac. Tick Keep to leave a setting as it is."] = "Koliko frame rate-a svako podešavanje uzima na najvišem nivou, izmereno na vašem Mac-u. Štiklirajte Zadrži da podešavanje ostane kakvo jeste.",
 	["Starting point for your Mac, not measured yet. Run a System Check to fine-tune it."] = "Početna tačka za vaš Mac, još nije izmereno. Pokrenite System Check da je fino podesite.",
 	["Turn on 'Let Mac-ever lower resolution to reach your goal' to use a lower render scale: it saves the most heat."] = "Uključite 'Dozvoli Mac-ever-u da snizi rezoluciju da bi dostigao cilj' da koristite niži render scale: on najviše štedi toplotu.",
 })

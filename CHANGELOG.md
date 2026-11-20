@@ -5,6 +5,9 @@
 ### Added
 - **Headroom.** The frame rate stays capped at your goal (60), but the System Check only raises graphics until the Mac could still reach goal x headroom without the cap (60 x 1.6 = about 96 fps). The GPU never runs flat out, so the fans stay quiet. Set it on the System Check tab; "Off" restores the original behaviour.
 
+### Added (keep what you like)
+- **A Keep box on every row of the System Check table.** The table already shows what each setting costs in fps at its maximum; tick Keep to leave a setting as it is. Apply Recommended, presets and Instance Settings never change a kept setting, and the rest is solved again around it, counting its cost at the value it has now. Change the value yourself under Standard Settings first.
+
 ### Added (starting profiles)
 - **The 60 fps preset works before any System Check.** It starts from a profile for your Mac's class (chip, Air or not, memory): lower render scale, SSAO, Compute Effects, view distance, environment and clutter on smaller chips, Shadows Good from M3 on. It stays capped at 60 and is replaced by the measured result once you run the System Check. Without permission to lower resolution it uses 85% render scale and says so.
 - MacBook Air gets headroom x1.75 by default (it has no fan).

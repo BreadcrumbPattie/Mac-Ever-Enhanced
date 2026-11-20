@@ -456,8 +456,42 @@ end
 -- value (shadows where the check doesn't tune them, glow, sharpness, the Standard picture and sharpening)
 -- the result doesn't set already. Keep my Hidden Settings: the player's
 -- Hidden settings instead of the reset and the fixed Hidden values.
+-- Settings the player keeps as they are (fork addition): the System Check's table has a
+-- Keep box per setting. A kept setting is never changed by a result, preset or Instance
+-- Settings; the rest is solved around it, counting its cost at the value it has now.
+function Solver.IsLocked(name)
+	local locked = ns.db and ns.db.ui.locked
+	return type(locked) == "table" and locked[name:lower()] == true
+end
+
+function Solver.SetLocked(name, on)
+	if not ns.db then
+		return
+	end
+	ns.db.ui.locked = type(ns.db.ui.locked) == "table" and ns.db.ui.locked or {}
+	ns.db.ui.locked[name:lower()] = on and true or nil
+end
+
+function Solver.AnyLocked()
+	local locked = ns.db and ns.db.ui.locked
+	return type(locked) == "table" and next(locked) ~= nil
+end
+
+local function WithoutLocked(changes)
+	if not Solver.AnyLocked() then
+		return changes
+	end
+	local kept = {}
+	for _, change in ipairs(changes) do
+		if not Solver.IsLocked(change.name) then
+			kept[#kept + 1] = change
+		end
+	end
+	return kept
+end
+
 function Solver.ForApply(changes)
-	return Solver.WithReset(changes, Solver.FixedChanges(false), Solver.KeepsHidden() and Solver.KeepChanges() or nil)
+	return Solver.WithReset(WithoutLocked(changes), Solver.FixedChanges(false), Solver.KeepsHidden() and Solver.KeepChanges() or nil)
 end
 
 -- Index in levels nearest to value.
@@ -609,14 +643,24 @@ function Solver.Solve(report, goal, tolerance)
 		return nil
 	end
 	local dims = {}
+	local keptCost = 0
 	for _, setting in ipairs(report.settings) do
+		if Solver.IsLocked(setting.name) then
+			-- Kept as it is: its cost at the value it has now is part of the fixed overhead.
+			if setting.cost then
+				keptCost = keptCost + Solver.LevelCost(
+					{ levels = setting.levels, cost = setting.cost, costs = setting.costs },
+					math.max(1, setting.currentIndex or #setting.levels))
+			end
+		else
 		dims[#dims + 1] = {
 			id = setting.id, name = setting.name, levels = setting.levels, extras = setting.extras,
 			weight = setting.weight, cheap = setting.cheap, cost = setting.cost, costs = setting.costs, quality = setting.quality,
 			keep = setting.keep,
 		}
+		end
 	end
-	local overhead = report.floorTime + (report.correction or 0)
+	local overhead = report.floorTime + (report.correction or 0) + keptCost
 	local choice, reachable = Solver.Recommend(dims, overhead, goal, tolerance, report.noise)
 	-- Measured: everything at maximum already meets this goal, so keep it all at maximum.
 	-- A predicted maximum isn't taken as proof; the model decides then.
